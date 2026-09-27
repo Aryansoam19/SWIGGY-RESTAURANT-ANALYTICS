@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swiggy Restaurant Analytics — Power BI Interactive Dashboard</title>
+    <!-- Google Fonts & Chart.js -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --swiggy-orange: #FC8019;
+            --swiggy-orange-hover: #E37012;
+            --swiggy-dark: #12131A;
+            --swiggy-card: #1D1E2C;
+            --swiggy-card-border: #2C2D40;
+            --swiggy-text-primary: #FFFFFF;
+            --swiggy-text-secondary: #9FA2B4;
+            --swiggy-veg: #48C479;
+            --swiggy-nonveg: #E23744;
+            --swiggy-gold: #FFA700;
+            --swiggy-blue: #00B4D8;
+            --swiggy-purple: #7B2CBF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--swiggy-dark);
+            color: var(--swiggy-text-primary);
+            min-height: 100vh;
+            padding: 24px 32px;
+        }
+
+        /* Top Brand Bar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--swiggy-card-border);
+            margin-bottom: 24px;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-badge {
+            background: linear-gradient(135deg, var(--swiggy-orange), #FF5722);
+            color: #FFFFFF;
+            font-weight: 800;
+            font-size: 20px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(252, 128, 25, 0.35);
+        }
+
+        .title-block h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .title-block p {
+            font-size: 13px;
+            color: var(--swiggy-text-secondary);
+            margin-top: 2px;
+        }
+
+        .powerbi-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(252, 128, 25, 0.12);
+            border: 1px solid rgba(252, 128, 25, 0.3);
+            color: var(--swiggy-orange);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+
+        /* Filter Slicers Bar */
+        .slicers-bar {
+            background-color: var(--swiggy-card);
+            border: 1px solid var(--swiggy-card-border);
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+
+        .slicer-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .slicer-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--swiggy-orange);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        select, input {
+            background-color: #151620;
+            color: #FFFFFF;
+            border: 1px solid var(--swiggy-card-border);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--swiggy-orange);
+        }
+
+        .veg-toggle-btn {
+            background-color: #151620;
+            border: 1px solid var(--swiggy-card-border);
+            color: var(--swiggy-text-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .veg-toggle-btn.active-veg {
+            background-color: rgba(72, 196, 121, 0.15);
+            border-color: var(--swiggy-veg);
+            color: var(--swiggy-veg);
+        }
+
+        .reset-btn {
+            margin-left: auto;
+            background-color: transparent;
+            border: 1px solid var(--swiggy-card-border);
+            color: var(--swiggy-text-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            color: #FFFFFF;
+            border-color: #FFFFFF;
+        }
+
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background-color: var(--swiggy-card);
+            border: 1px solid var(--swiggy-card-border);
+            border-radius: 14px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--swiggy-orange);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .kpi-card.orange::before { background-color: var(--swiggy-orange); }
+        .kpi-card.gold::before { background-color: var(--swiggy-gold); }
+        .kpi-card.green::before { background-color: var(--swiggy-veg); }
+        .kpi-card.blue::before { background-color: var(--swiggy-blue); }
+        .kpi-card.purple::before { background-color: var(--swiggy-purple); }
+
+        .kpi-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--swiggy-text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #FFFFFF;
+            line-height: 1.1;
+        }
+
+        .kpi-subtext {
+            font-size: 11px;
+            color: var(--swiggy-text-secondary);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Charts Grid */
+        .charts-grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .charts-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-grid-2, .charts-grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background-color: var(--swiggy-card);
+            border: 1px solid var(--swiggy-card-border);
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .chart-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        .chart-subtitle {
+            font-size: 11px;
+            color: var(--swiggy-text-secondary);
+            margin-top: 2px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 270px;
+            width: 100%;
+        }
+
+        /* Leaderboard Table */
+        .table-card {
+            background-color: var(--swiggy-card);
+            border: 1px solid var(--swiggy-card-border);
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 14px;
+        }
+
+        th {
+            background-color: #171822;
+            color: var(--swiggy-orange);
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            border-bottom: 1px solid var(--swiggy-card-border);
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #232535;
+            color: #E2E4EC;
+        }
+
+        tr:hover td {
+            background-color: #242637;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-rating {
+            background-color: rgba(255, 167, 0, 0.15);
+            color: var(--swiggy-gold);
+        }
+
+        .badge-cities {
+            background-color: rgba(252, 128, 25, 0.15);
+            color: var(--swiggy-orange);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: var(--swiggy-text-secondary);
+            padding-top: 16px;
+            border-top: 1px solid var(--swiggy-card-border);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Header -->
+    <header class="header">
+        <div class="brand-section">
+            <div class="brand-badge">swiggy</div>
+            <div class="title-block">
+                <h1>Restaurant Intelligence Dashboard</h1>
+                <p>PostgreSQL Database • 139,321 Cleaned Restaurant Outlets Across 580+ Indian Cities</p>
+            </div>
+        </div>
+        <div class="powerbi-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4 18h2v-6H4v6zm4 0h2V6H8v12zm4 0h2V2h-2v16zm4 0h2v-9h-2v9zm4 0h2v-4h-2v4z"/>
+            </svg>
+            POWER BI LIVE PROTOTYPE
+        </div>
+    </header>
+
+    <!-- Slicers Bar -->
+    <section class="slicers-bar">
+        <div class="slicer-group">
+            <label class="slicer-label">Select City / Hub</label>
+            <select id="citySelect" onchange="updateDashboard()">
+                <option value="ALL">All Indian Cities (581)</option>
+                <option value="Kanpur">Kanpur</option>
+                <option value="Central-Goa">Central-Goa</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Indore">Indore</option>
+                <option value="Nagpur">Nagpur</option>
+                <option value="Vadodara">Vadodara</option>
+                <option value="Lucknow">Lucknow</option>
+                <option value="Jaipur">Jaipur</option>
+                <option value="Kolkata">Kolkata</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Ahmedabad">Ahmedabad</option>
+                <option value="Surat">Surat</option>
+            </select>
+        </div>
+
+        <div class="slicer-group">
+            <label class="slicer-label">Cuisine Filter</label>
+            <select id="cuisineSelect" onchange="updateDashboard()">
+                <option value="ALL">All Primary Cuisines</option>
+                <option value="North Indian">North Indian</option>
+                <option value="Chinese">Chinese</option>
+                <option value="Indian">Indian</option>
+                <option value="Biryani">Biryani</option>
+                <option value="Pizzas">Pizzas</option>
+                <option value="South Indian">South Indian</option>
+                <option value="Bakery">Bakery</option>
+                <option value="Beverages">Beverages</option>
+                <option value="Snacks">Snacks</option>
+                <option value="Fast Food">Fast Food</option>
+            </select>
+        </div>
+
+        <div class="slicer-group">
+            <label class="slicer-label">Vegetarian Mode</label>
+            <button id="vegBtn" class="veg-toggle-btn" onclick="toggleVeg()">🌱 Pure Veg Only</button>
+        </div>
+
+        <button class="reset-btn" onclick="resetFilters()">Reset All Filters</button>
+    </section>
+
+    <!-- KPI Cards -->
+    <section class="kpi-grid">
+        <div class="kpi-card orange">
+            <div class="kpi-title">Total Outlets</div>
+            <div class="kpi-value" id="kpiOutlets">139,321</div>
+            <div class="kpi-subtext">Active partner restaurants</div>
+        </div>
+
+        <div class="kpi-card gold">
+            <div class="kpi-title">Average Rating</div>
+            <div class="kpi-value" id="kpiRating">4.04 ⭐</div>
+            <div class="kpi-subtext">Across 50M+ customer ratings</div>
+        </div>
+
+        <div class="kpi-card blue">
+            <div class="kpi-title">Avg Cost for Two</div>
+            <div class="kpi-value" id="kpiCost">₹269</div>
+            <div class="kpi-subtext">Median basket: ₹200</div>
+        </div>
+
+        <div class="kpi-card green">
+            <div class="kpi-title">Pure Veg Share</div>
+            <div class="kpi-value" id="kpiVeg">42.0%</div>
+            <div class="kpi-subtext" id="kpiVegCount">58,495 pure veg outlets</div>
+        </div>
+
+        <div class="kpi-card purple">
+            <div class="kpi-title">Promotional Boost</div>
+            <div class="kpi-value">+45.6%</div>
+            <div class="kpi-subtext">Review volume surge on 3+ offers</div>
+        </div>
+    </section>
+
+    <!-- Charts Row 1 -->
+    <section class="charts-grid-2">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h2 class="chart-title">Top 10 Cities by Restaurant Count</h2>
+                    <p class="chart-subtitle">Distribution of partner inventory across highest-density markets</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="cityChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h2 class="chart-title">Veg vs Non-Veg Share</h2>
+                    <p class="chart-subtitle">Platform-wide dietary preference split</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="vegChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Charts Row 2 -->
+    <section class="charts-grid-3">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h2 class="chart-title">Top Cuisines Market Share</h2>
+                    <p class="chart-subtitle">Listing volume by category</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="cuisineChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h2 class="chart-title">Pricing Tier Sweet Spot</h2>
+                    <p class="chart-subtitle">Average Rating by Ticket Size (₹)</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="priceRatingChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h2 class="chart-title">Discount Lift on Reviews</h2>
+                    <p class="chart-subtitle">Avg reviews received by offer tier</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="promoChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- National Brand Chains Leaderboard -->
+    <section class="table-card">
+        <div class="chart-header">
+            <div>
+                <h2 class="chart-title">Top National Brand Partners</h2>
+                <p class="chart-subtitle">Enterprise restaurant chains ranked by geographic presence across Indian cities</p>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Brand Partner</th>
+                    <th>Cities Present</th>
+                    <th>Total Outlets</th>
+                    <th>Average Rating</th>
+                    <th>Avg Cost for Two</th>
+                    <th>Total Review Volume</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Domino's Pizza</strong></td>
+                    <td><span class="badge badge-cities">209 Cities</span></td>
+                    <td>209 Outlets</td>
+                    <td><span class="badge badge-rating">4.28 ⭐</span></td>
+                    <td>₹404</td>
+                    <td>167,132 reviews</td>
+                </tr>
+                <tr>
+                    <td><strong>KFC</strong></td>
+                    <td><span class="badge badge-cities">201 Cities</span></td>
+                    <td>204 Outlets</td>
+                    <td><span class="badge badge-rating">4.22 ⭐</span></td>
+                    <td>₹404</td>
+                    <td>406,490 reviews</td>
+                </tr>
+                <tr>
+                    <td><strong>Pizza Hut</strong></td>
+                    <td><span class="badge badge-cities">200 Cities</span></td>
+                    <td>200 Outlets</td>
+                    <td><span class="badge badge-rating">4.12 ⭐</span></td>
+                    <td>₹356</td>
+                    <td>286,611 reviews</td>
+                </tr>
+                <tr>
+                    <td><strong>The Belgian Waffle Co.</strong></td>
+                    <td><span class="badge badge-cities">169 Cities</span></td>
+                    <td>169 Outlets</td>
+                    <td><span class="badge badge-rating">4.51 ⭐</span></td>
+                    <td>₹202</td>
+                    <td>122,565 reviews</td>
+                </tr>
+                <tr>
+                    <td><strong>Kwality Walls Frozen Dessert</strong></td>
+                    <td><span class="badge badge-cities">169 Cities</span></td>
+                    <td>169 Outlets</td>
+                    <td><span class="badge badge-rating">4.57 ⭐</span></td>
+                    <td>₹228</td>
+                    <td>58,320 reviews</td>
+                </tr>
+                <tr>
+                    <td><strong>Baskin Robbins</strong></td>
+                    <td><span class="badge badge-cities">160 Cities</span></td>
+                    <td>160 Outlets</td>
+                    <td><span class="badge badge-rating">4.39 ⭐</span></td>
+                    <td>₹245</td>
+                    <td>45,845 reviews</td>
+                </tr>
+                <tr>
+                    <td><strong>La Pino'Z Pizza</strong></td>
+                    <td><span class="badge badge-cities">153 Cities</span></td>
+                    <td>153 Outlets</td>
+                    <td><span class="badge badge-rating">4.15 ⭐</span></td>
+                    <td>₹339</td>
+                    <td>144,954 reviews</td>
+                </tr>
+                <tr>
+                    <td><strong>Grameen Kulfi</strong></td>
+                    <td><span class="badge badge-cities">116 Cities</span></td>
+                    <td>117 Outlets</td>
+                    <td><span class="badge badge-rating">4.68 ⭐</span></td>
+                    <td>₹119</td>
+                    <td>25,454 reviews</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Swiggy Restaurant Analytics &copy; 2026 • Powered by PostgreSQL & Power BI Custom Brand Theme
+    </footer>
+
+    <!-- Chart.js Logic -->
+    <script>
+        // City Chart
+        const ctxCity = document.getElementById('cityChart').getContext('2d');
+        const cityChart = new Chart(ctxCity, {
+            type: 'bar',
+            data: {
+                labels: ['Kanpur', 'Goa', 'Hyderabad', 'Indore', 'Nagpur', 'Vadodara', 'Lucknow', 'Jaipur', 'Kanchrapara', 'Kolkata'],
+                datasets: [{
+                    label: 'Restaurants',
+                    data: [2000, 1998, 1998, 1998, 1998, 1998, 1996, 1990, 1977, 1974],
+                    backgroundColor: '#FC8019',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#9FA2B4' }, grid: { display: false } },
+                    y: { ticks: { color: '#9FA2B4' }, grid: { color: '#2A2C3E' } }
+                }
+            }
+        });
+
+        // Veg Doughnut Chart
+        const ctxVeg = document.getElementById('vegChart').getContext('2d');
+        const vegChart = new Chart(ctxVeg, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pure Veg (42.0%)', 'Non-Veg / Mixed (58.0%)'],
+                datasets: [{
+                    data: [58495, 80826],
+                    backgroundColor: ['#48C479', '#E23744'],
+                    borderColor: '#1D1E2C',
+                    borderWidth: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#FFFFFF', font: { size: 11 } }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // Cuisine Doughnut
+        const ctxCuisine = document.getElementById('cuisineChart').getContext('2d');
+        const cuisineChart = new Chart(ctxCuisine, {
+            type: 'pie',
+            data: {
+                labels: ['North Indian', 'Chinese', 'Indian', 'Biryani', 'Pizzas', 'South Indian', 'Others'],
+                datasets: [{
+                    data: [20154, 18844, 16452, 9798, 8602, 8190, 57281],
+                    backgroundColor: ['#FC8019', '#FFA700', '#FF5722', '#7B2CBF', '#00B4D8', '#48C479', '#4E5166'],
+                    borderColor: '#1D1E2C',
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#FFFFFF', font: { size: 10 } }
+                    }
+                }
+            }
+        });
+
+        // Price Tier vs Rating Bar Chart
+        const ctxPrice = document.getElementById('priceRatingChart').getContext('2d');
+        const priceChart = new Chart(ctxPrice, {
+            type: 'bar',
+            data: {
+                labels: ['< ₹200 (Budget)', '₹200-400 (Mid)', '₹401-700 (Upper)', '> ₹700 (Premium)'],
+                datasets: [{
+                    label: 'Avg Rating (⭐)',
+                    data: [4.02, 4.05, 4.16, 4.18],
+                    backgroundColor: ['#4E5166', '#FC8019', '#FFA700', '#48C479'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#9FA2B4' }, grid: { display: false } },
+                    y: { 
+                        min: 3.8, 
+                        max: 4.3, 
+                        ticks: { color: '#9FA2B4' }, 
+                        grid: { color: '#2A2C3E' } 
+                    }
+                }
+            }
+        });
+
+        // Promotional Activity Chart
+        const ctxPromo = document.getElementById('promoChart').getContext('2d');
+        const promoChart = new Chart(ctxPromo, {
+            type: 'bar',
+            data: {
+                labels: ['No Offers', '1-2 Offers', '3+ Offers'],
+                datasets: [{
+                    label: 'Avg Reviews Received',
+                    data: [399, 489, 581],
+                    backgroundColor: ['#4E5166', '#00B4D8', '#FC8019'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#9FA2B4' }, grid: { display: false } },
+                    y: { ticks: { color: '#9FA2B4' }, grid: { color: '#2A2C3E' } }
+                }
+            }
+        });
+
+        // Interactive filtering simulation
+        let isPureVegFilter = false;
+
+        function toggleVeg() {
+            isPureVegFilter = !isPureVegFilter;
+            const btn = document.getElementById('vegBtn');
+            if (isPureVegFilter) {
+                btn.classList.add('active-veg');
+                btn.innerText = '🌱 Pure Veg Active (Filtering...)';
+            } else {
+                btn.classList.remove('active-veg');
+                btn.innerText = '🌱 Pure Veg Only';
+            }
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            const city = document.getElementById('citySelect').value;
+            const cuisine = document.getElementById('cuisineSelect').value;
+
+            // City-based dynamic adjustments
+            if (city === 'Ahmedabad' || city === 'Surat' || city === 'Indore') {
+                document.getElementById('kpiVeg').innerText = (city === 'Ahmedabad' ? '77.0%' : (city === 'Indore' ? '74.0%' : '73.7%'));
+                document.getElementById('kpiRating').innerText = '4.10 ⭐';
+                document.getElementById('kpiCost').innerText = '₹245';
+                document.getElementById('kpiOutlets').innerText = '1,800+';
+            } else if (city === 'Central-Goa') {
+                document.getElementById('kpiVeg').innerText = '18.4%';
+                document.getElementById('kpiRating').innerText = '4.15 ⭐';
+                document.getElementById('kpiCost').innerText = '₹471';
+                document.getElementById('kpiOutlets').innerText = '1,998';
+            } else if (city === 'Hyderabad') {
+                document.getElementById('kpiVeg').innerText = '24.1%';
+                document.getElementById('kpiRating').innerText = '3.98 ⭐';
+                document.getElementById('kpiCost').innerText = '₹363';
+                document.getElementById('kpiOutlets').innerText = '1,998';
+            } else {
+                document.getElementById('kpiVeg').innerText = isPureVegFilter ? '100%' : '42.0%';
+                document.getElementById('kpiRating').innerText = isPureVegFilter ? '4.12 ⭐' : '4.04 ⭐';
+                document.getElementById('kpiCost').innerText = '₹269';
+                document.getElementById('kpiOutlets').innerText = isPureVegFilter ? '58,495' : '139,321';
+            }
+        }
+
+        function resetFilters() {
+            document.getElementById('citySelect').value = 'ALL';
+            document.getElementById('cuisineSelect').value = 'ALL';
+            isPureVegFilter = false;
+            document.getElementById('vegBtn').classList.remove('active-veg');
+            document.getElementById('vegBtn').innerText = '🌱 Pure Veg Only';
+            updateDashboard();
+        }
+    </script>
+</body>
+</html>

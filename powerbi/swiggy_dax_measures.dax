@@ -1,0 +1,171 @@
+/*
+================================================================================
+SWIGGY RESTAURANT ANALYTICS - COMPLETE DAX MEASURES LIBRARY
+================================================================================
+Target Model    : Power BI Desktop (Connected to 'vw_powerbi_restaurants')
+Author          : Data Analytics Project
+Description     : Production DAX formulas categorized into Core KPIs,
+                  Comparative Variances, Ranking, and Dynamic Visual Titles.
+================================================================================
+*/
+
+-- ============================================================================
+-- 1. CORE EXECUTIVE KPIS
+-- ============================================================================
+
+-- Total Number of Listed Restaurants
+Total Restaurants = 
+COUNTROWS(vw_powerbi_restaurants)
+
+-- Total Reviews Logged Across All Listed Restaurants
+Total Review Volume = 
+SUM(vw_powerbi_restaurants[review_count])
+
+-- Formatted Review Volume in Thousands / Millions (e.g. "1.5M")
+Total Reviews Formatted = 
+VAR TotalRev = [Total Review Volume]
+RETURN 
+    SWITCH(
+        TRUE(),
+        TotalRev >= 1000000, FORMAT(TotalRev / 1000000, "0.0") & "M Reviews",
+        TotalRev >= 1000, FORMAT(TotalRev / 1000, "0.0") & "K Reviews",
+        FORMAT(TotalRev, "#,##0") & " Reviews"
+    )
+
+-- Average Customer Rating (Weighted across rated restaurants)
+Average Rating = 
+AVERAGE(vw_powerbi_restaurants[rating])
+
+-- Formatted Average Rating with Star Icon
+Average Rating KPI = 
+IF(
+    ISBLANK([Average Rating]), 
+    "N/A", 
+    FORMAT([Average Rating], "0.00") & " ⭐"
+)
+
+-- Average Ticket Size (Cost for Two) in INR
+Average Cost for Two = 
+AVERAGE(vw_powerbi_restaurants[cost_for_two])
+
+-- Formatted Cost for Two with Rupee Currency Symbol
+Average Cost KPI = 
+"₹" & FORMAT([Average Cost for Two], "#,##0")
+
+-- Total Number of Pure Veg Outlets
+Pure Veg Restaurants = 
+CALCULATE(
+    COUNTROWS(vw_powerbi_restaurants),
+    vw_powerbi_restaurants[is_pure_veg] = TRUE()
+)
+
+-- Pure Veg Penetration Share %
+Pure Veg Share % = 
+DIVIDE([Pure Veg Restaurants], [Total Restaurants], 0)
+
+-- Unrated Outlets (Cold-Start Backlog)
+Unrated Restaurants = 
+CALCULATE(
+    COUNTROWS(vw_powerbi_restaurants),
+    ISBLANK(vw_powerbi_restaurants[rating])
+)
+
+-- Unrated % of Inventory
+Cold Start % = 
+DIVIDE([Unrated Restaurants], [Total Restaurants], 0)
+
+
+-- ============================================================================
+-- 2. PROMOTIONS & DISCOUNT ANALYTICS
+-- ============================================================================
+
+-- Outlets Running at least 1 Active Deal
+Restaurants with Deals = 
+CALCULATE(
+    COUNTROWS(vw_powerbi_restaurants),
+    vw_powerbi_restaurants[offer_count] > 0
+)
+
+-- Active Promotion Penetration %
+Promo Penetration % = 
+DIVIDE([Restaurants with Deals], [Total Restaurants], 0)
+
+-- Average Review Volume for Heavy Discounters (3+ Offers)
+Avg Reviews (3+ Offers) = 
+CALCULATE(
+    AVERAGE(vw_powerbi_restaurants[review_count]),
+    vw_powerbi_restaurants[offer_count] >= 3
+)
+
+-- Average Review Volume for Zero-Discount Outlets
+Avg Reviews (No Offers) = 
+CALCULATE(
+    AVERAGE(vw_powerbi_restaurants[review_count]),
+    vw_powerbi_restaurants[offer_count] = 0
+)
+
+-- Promotion Review Lift Factor (% increase in reviews driven by deals)
+Discount Review Lift % = 
+DIVIDE(
+    [Avg Reviews (3+ Offers)] - [Avg Reviews (No Offers)],
+    [Avg Reviews (No Offers)],
+    0
+)
+
+
+-- ============================================================================
+-- 3. COMPARATIVE BENCHMARKS & VARIANCE VS NATIONAL AVERAGE
+-- ============================================================================
+
+-- National Average Rating (Ignoring City Slicer)
+National Avg Rating = 
+CALCULATE(
+    AVERAGE(vw_powerbi_restaurants[rating]),
+    ALL(vw_powerbi_restaurants)
+)
+
+-- National Average Cost for Two (Ignoring City Slicer)
+National Avg Cost = 
+CALCULATE(
+    AVERAGE(vw_powerbi_restaurants[cost_for_two]),
+    ALL(vw_powerbi_restaurants)
+)
+
+-- Rating Variance vs National Benchmark
+Rating vs National Variance = 
+[Average Rating] - [National Avg Rating]
+
+-- Formatted Rating Variance indicator
+Rating Variance Indicator = 
+VAR Diff = [Rating vs National Variance]
+RETURN 
+    IF(
+        Diff >= 0,
+        "▲ +" & FORMAT(Diff, "0.02") & " vs National Avg",
+        "▼ " & FORMAT(Diff, "0.02") & " vs National Avg"
+    )
+
+
+-- ============================================================================
+-- 4. DYNAMIC TITLES FOR SLICERS & DRILLDOWNS
+-- ============================================================================
+
+-- Dynamic Page 1 Header Title based on Selected City Slicer
+Dynamic City Title = 
+VAR SelectedCity = SELECTEDVALUE(vw_powerbi_restaurants[city])
+RETURN 
+    IF(
+        ISBLANK(SelectedCity),
+        "All India Restaurant Performance & Market Overview",
+        "Market Intelligence Deep Dive — " & SelectedCity
+    )
+
+-- Dynamic Cuisine Performance Header
+Dynamic Cuisine Title = 
+VAR SelectedCuisine = SELECTEDVALUE(vw_powerbi_restaurants[primary_cuisine])
+RETURN 
+    IF(
+        ISBLANK(SelectedCuisine),
+        "Cuisine Landscape & Menu Economics (All Cuisines)",
+        "Deep Dive Analysis: " & SelectedCuisine & " Category"
+    )
