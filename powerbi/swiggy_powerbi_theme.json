@@ -1,40 +1,38 @@
 {
-  "name": "Swiggy Official Brand Theme",
+  "name": "Swiggy Deep Navy Official Theme",
   "dataColors": [
     "#FC8019",
-    "#48C479",
+    "#00D284",
+    "#9D62F8",
+    "#38BDF8",
     "#FFA700",
     "#E23744",
-    "#00B4D8",
-    "#7B2CBF",
-    "#282C3F",
-    "#686B78",
-    "#FF5722",
-    "#2EC4B6"
+    "#FFB067",
+    "#62738E"
   ],
-  "background": "#181820",
+  "background": "#070B19",
   "foreground": "#FFFFFF",
   "tableAccent": "#FC8019",
   "textClasses": {
     "callout": {
-      "fontSize": 24,
-      "fontFace": "Segoe UI",
-      "color": "#FC8019"
+      "fontSize": 22,
+      "fontFace": "Segoe UI Bold",
+      "color": "#FFFFFF"
     },
     "title": {
-      "fontSize": 14,
-      "fontFace": "Segoe UI Semibold",
+      "fontSize": 13,
+      "fontFace": "Segoe UI Bold",
       "color": "#FFFFFF"
     },
     "header": {
-      "fontSize": 12,
+      "fontSize": 11,
       "fontFace": "Segoe UI Semibold",
       "color": "#FC8019"
     },
     "label": {
       "fontSize": 10,
       "fontFace": "Segoe UI",
-      "color": "#A0A4B8"
+      "color": "#8B9BB4"
     }
   },
   "visualStyles": {
@@ -43,15 +41,15 @@
         "background": [
           {
             "show": true,
-            "color": { "solid": { "color": "#242633" } },
+            "color": { "solid": { "color": "#0D152A" } },
             "transparency": 0
           }
         ],
         "border": [
           {
             "show": true,
-            "color": { "solid": { "color": "#333748" } },
-            "radius": 8
+            "color": { "solid": { "color": "#162444" } },
+            "radius": 12
           }
         ]
       }
@@ -60,7 +58,7 @@
       "*": {
         "background": [
           {
-            "color": { "solid": { "color": "#181820" } },
+            "color": { "solid": { "color": "#070B19" } },
             "transparency": 0
           }
         ]
