@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "python",
+      "args": [
+        "e:/DATA-ANALYTICS/Swiggy project DA/.agents/plugins/postgres/server.py"
+      ],
+      "env": {
+        "PGHOST": "localhost",
+        "PGPORT": "5432",
+        "PGDATABASE": "postgres",
+        "PGUSER": "postgres",
+        "PGPASSWORD": "aryansoam19"
+      }
+    }
+  }
+}

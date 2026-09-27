@@ -1,0 +1,164 @@
+================================================================================
+SWIGGY EXPLORATORY DATA ANALYSIS (EDA) - FULL COMPUTATIONAL OUTPUT
+================================================================================
+
+Loaded cleaned dataset: 139,321 rows, 13 columns
+   restaurant_name  ...                                         offer_name
+0  La Pino'Z Pizza  ...  FLAT DEAL | FLAT ₹125 OFF | USE FLAT125ABOVE ₹...
+1  The Second Wife  ...  30% OFF UPTO ₹75 | USE TRYNEWABOVE ₹149, FLAT ...
+2      Tasty Bites  ...              FLAT ₹120 OFF | USE AXIS120ABOVE ₹500
+3      Food Studio  ...  50% OFF UPTO ₹100 | USE TRYNEWABOVE ₹129, FLAT...
+4     Roll Express  ...  DEAL OF DAY | 10% OFF UPTO ₹40 | USE STEALDEAL...
+
+[5 rows x 13 columns]
+
+Total unique locations: 581
+                Restaurant Count  % Share  Cumulative %
+location                                               
+Kanpur                      2000     1.44          1.44
+Central-Goa                 1998     1.43          2.87
+Hyderabad                   1998     1.43          4.30
+Indore                      1998     1.43          5.74
+Nagpur                      1998     1.43          7.17
+Vadodara                    1998     1.43          8.61
+Lucknow                     1996     1.43         10.04
+Jaipur                      1990     1.43         11.47
+Kanchrapara                 1977     1.42         12.89
+Kolkata                     1974     1.42         14.30
+Bhubaneswar                 1906     1.37         15.67
+Doddaballapura              1893     1.36         17.03
+Mumbai                      1893     1.36         18.39
+Coimbatore                  1889     1.36         19.74
+Ahmedabad                   1801     1.29         21.04
+
+--- Top 10 Primary Cuisines ---
+                 Outlet Count  % Share
+primary_cuisine                       
+North Indian            20154    14.47
+Chinese                 18844    13.53
+Indian                  16452    11.81
+Biryani                  9798     7.03
+Pizzas                   8602     6.17
+South Indian             8190     5.88
+Bakery                   7806     5.60
+Beverages                7272     5.22
+Snacks                   6287     4.51
+Fast Food                5411     3.88
+
+--- Top 10 All Cuisines Offered (Across Menus) ---
+              Total Listings Offering  % of All Restaurants
+cuisine                                                    
+Chinese                         37527                 26.94
+North Indian                    28722                 20.62
+Indian                          23160                 16.62
+Snacks                          17339                 12.45
+Biryani                         14942                 10.72
+Fast Food                       13416                  9.63
+Beverages                       13118                  9.42
+South Indian                    12275                  8.81
+Pizzas                          12059                  8.66
+Bakery                           9044                  6.49
+
+Rating Summary Statistics:
+Mean: 4.04 | Median: 4.10 | Mode: 4.30 | Std: 0.50
+IQR (25% - 75%): 3.80 to 4.30
+
+Rating Tier Distribution:
+           Count  % Share
+rating                   
+< 3.0       5004     4.73
+3.0 - 3.4   9978     9.43
+3.5 - 3.9  29352    27.73
+4.0 - 4.4  51156    48.32
+4.5 - 5.0  10374     9.80
+
+Cost for Two Statistics (INR):
+Mean: Rs. 268.91 | Median: Rs. 250.00 | Mode: Rs. 200.00
+IQR: Rs. 200.00 to Rs. 300.00
+
+Price Tiers Breakdown:
+                        Count  % Share
+cost_for_two                          
+Budget (<= 150)         21450    15.40
+Affordable (151 - 250)  63321    45.45
+Mid-Range (251 - 500)   49825    35.76
+Premium (501 - 1000)     4280     3.07
+Luxury (> 1000)           445     0.32
+
+Pearson Correlation: 0.0634 | Spearman Rank: 0.0589
+
+Average Rating by Price Tier:
+                        count  mean  median  % Rated >= 4.0
+price_tier                                                 
+Budget (<= 150)         16244  4.03     4.1           63.93
+Affordable (151 - 250)  47589  4.01     4.1           63.50
+Mid-Range (251 - 500)   38386  4.06     4.2           69.53
+Premium (501 - 1000)     3312  4.16     4.2           78.93
+Luxury (> 1000)           333  4.18     4.3           77.48
+
+Correlation (Rating vs Reviews): 0.1131
+
+Performance Across Popularity Tiers:
+                     count  mean  median  % Rated >= 4.0
+popularity_tier                                         
+Micro (2-9)          18168  3.91     4.0           52.16
+Niche (10-49)        26799  3.95     4.0           55.46
+Moderate (50-99)     10902  4.03     4.1           64.51
+High (100-499)       23137  4.08     4.1           71.36
+Very High (500-999)   8307  4.14     4.2           78.10
+Massive (1K-4.9K)    13337  4.18     4.2           83.46
+Superstar (5K+)       5214  4.23     4.3           89.43
+
+Pure Veg vs Non-Veg Comparison:
+is_pure_veg       False     True 
+total_count    80826.00  58495.00
+pct_share         58.01     41.99
+avg_price        289.82    240.03
+median_price     250.00    200.00
+avg_rating         4.03      4.06
+median_rating      4.10      4.20
+avg_reviews      596.61    478.56
+avg_offers         3.26      3.08
+
+Offer Distribution:
+             Restaurants  % Share
+offer_count                      
+0                   1752     1.26
+1                  34606    24.84
+2                  14882    10.68
+3                   8759     6.29
+4                  43622    31.31
+5                  35700    25.62
+
+Restaurants with >= 1 offer: 137,569 (98.74%)
+
+Restaurants with Rating >= 4.5 and Reviews >= 1,000: 2,230 (1.60%)
+
+Top 10 Outlets (Rating >= 4.8, Sorted by Review Volume):
+                                restaurant_name    location primary_cuisine  rating  rating_count  cost_for_two
+9592                          Om Veg Restaurant  Aurangabad   Maharashtrian     5.0        1000.0           150
+19655                         Agra Chat Bhandar    Bhilwara       Fast Food     5.0        1000.0           100
+85137                          Apni Nighi Rasoi    Ludhiana          Indian     5.0        1000.0           200
+15780          Amrit'S Bikaner Mishthan Bhandar     Barnala        Desserts     4.9        1000.0           200
+57710                        Royal Pizza Canter      Indore          Pizzas     4.9        1000.0           250
+53997                         Natural Ice Cream       Hosur       Ice Cream     4.8       10000.0           150
+61399                         Natural Ice Cream      Jaipur       Ice Cream     4.8       10000.0           150
+121924                Raja Dairy- Poddar Arcade       Surat          Sweets     4.8       10000.0           200
+13873                         Natural Ice Cream     Bantwal       Ice Cream     4.8        5000.0           120
+76900   Pabrai'S Fresh And Naturelle Ice Creams     Kolkata       Ice Cream     4.8        5000.0           250
+
+Top 10 Strongest Cities (Composite Score):
+                    total_restaurants  avg_rating  ...  median_cost  composite_score
+location                                           ...                              
+Coimbatore                       1889        4.18  ...        200.0            82.08
+Thiruvananthapuram                837        4.24  ...        250.0            81.56
+Bhubaneswar                      1906        4.12  ...        248.0            75.64
+Surat                            1751        4.20  ...        300.0            74.06
+Bangalore                        1720        4.13  ...        264.5            73.62
+Kochi                            1470        4.26  ...        249.0            72.48
+Vadodara                         1998        4.15  ...        250.0            72.33
+Guwahati                         1683        4.12  ...        300.0            72.31
+Delhi                            1783        3.99  ...        250.0            70.66
+Nagpur                           1998        4.06  ...        250.0            70.63
+
+[10 rows x 5 columns]
