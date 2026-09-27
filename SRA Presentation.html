@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Swiggy Restaurant Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#070B19; --navy2:#0D152A; --orange:#FC8019; --text:#EAEDF5; --sub:#9AA3B8; --border:#1D2540;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--navy);color:var(--text);font-family:'Inter',sans-serif;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);overflow:hidden}
+.deck{position:relative;width:100%;height:100vh;height:100%}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
+  padding:6vh 8vw;background:radial-gradient(circle at 85% 10%, #12193344 0%, transparent 40%);overflow-y:auto}
+.slide.active{display:flex}
+h1{font-family:'Poppins',sans-serif;font-size:clamp(28px,4vw,46px);color:#fff;line-height:1.15}
+h2{font-family:'Poppins',sans-serif;font-size:clamp(20px,2.6vw,28px);color:var(--orange);margin-bottom:18px;letter-spacing:.3px}
+p,li{font-size:clamp(14px,1.3vw,17px);color:var(--sub);line-height:1.55}
+.tag{display:inline-block;color:var(--orange);font-weight:600;letter-spacing:2px;font-size:12px;text-transform:uppercase;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:10px}
+.card{background:var(--navy2);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+.card .num{font-family:'Poppins',sans-serif;font-size:clamp(22px,2.4vw,30px);color:#fff}
+.card .lbl{font-size:13px;color:var(--sub);margin-top:4px}
+.insight{background:var(--navy2);border:1px solid var(--border);border-left:3px solid var(--orange);
+  border-radius:10px;padding:16px 20px;margin-bottom:14px}
+.insight b{color:#fff}
+.pipeline{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
+.step{background:var(--navy2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:14px;color:#fff}
+.arrow{color:var(--orange);font-size:18px}
+.stack{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.pill{background:#12193a;border:1px solid var(--border);color:var(--text);border-radius:20px;padding:6px 14px;font-size:13px}
+.footer{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:0 8vw}
+.dots{display:flex;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border)}
+.dot.on{background:var(--orange)}
+.nav{display:flex;gap:10px}
+button{background:var(--navy2);border:1px solid var(--border);color:#fff;border-radius:8px;padding:8px 14px;cursor:pointer;font-size:13px}
+button:hover{border-color:var(--orange)}
+a{color:var(--orange)}
+@media (max-width:600px){.slide{padding:8vh 6vw 14vh}}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<div class="slide active">
+  <span class="tag">Data Analytics Project</span>
+  <h1>🍽️ Swiggy Restaurant<br>Analytics & Intelligence</h1>
+  <p style="margin-top:16px;max-width:560px">An end-to-end pipeline uncovering dining preferences, pricing economics, and promotional impact across <b style="color:#fff">139,321 restaurants</b> in <b style="color:#fff">580+ Indian cities</b>.</p>
+  <p style="margin-top:24px;font-size:13px">Python · PostgreSQL · SQL · Power BI &nbsp;|&nbsp; by Aryan Soam</p>
+</div>
+
+<div class="slide">
+  <h2>Executive Summary</h2>
+  <div class="grid">
+    <div class="card"><div class="num">139,321</div><div class="lbl">Outlets analyzed</div></div>
+    <div class="card"><div class="num">₹268.91</div><div class="lbl">Avg. cost for two</div></div>
+    <div class="card"><div class="num">4.04 ⭐</div><div class="lbl">Platform avg. rating</div></div>
+    <div class="card"><div class="num">58.01M</div><div class="lbl">Reviews captured</div></div>
+    <div class="card"><div class="num">42.0%</div><div class="lbl">Pure-veg outlets (58,495)</div></div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Data Pipeline & Architecture</h2>
+  <div class="pipeline">
+    <div class="step">Raw CSV</div><div class="arrow">→</div>
+    <div class="step">Python ETL (clean_data.py)</div><div class="arrow">→</div>
+    <div class="step">Cleaned dataset</div><div class="arrow">→</div>
+    <div class="step">PostgreSQL warehouse</div><div class="arrow">→</div>
+    <div class="step">15 SQL business queries</div><div class="arrow">→</div>
+    <div class="step">Power BI dashboard</div>
+  </div>
+  <p style="margin-top:22px">139,321 records ingested via bulk <b style="color:#fff">COPY in 1.87s</b>, with B-tree indexes on location, cuisine, rating, cost, and veg-status. Queries use window functions, CTEs, and BCG-style quadrant classification.</p>
+</div>
+
+<div class="slide">
+  <h2>Key Business Insights (1/2)</h2>
+  <div class="insight"><b>🎯 Pricing Sweet Spot — ₹401–₹700:</b> Highest satisfaction (4.16⭐) and nearly 2× the reviews (948 vs 481) vs. budget tier, despite budget (&lt;₹200) dominating volume.</div>
+  <div class="insight"><b>🍲 Specialist beats Generalist:</b> Single-cuisine kitchens score higher (4.09⭐ vs 4.02⭐) and earn 13.2% more reviews than 5+ cuisine menus.</div>
+  <div class="insight"><b>🏷️ Promotional Lift:</b> 3+ active offers drive a 45.6% review surge (581 vs 399) with no rating penalty.</div>
+</div>
+
+<div class="slide">
+  <h2>Key Business Insights (2/2)</h2>
+  <div class="insight"><b>🥗 Pure-Veg Whitespace:</b> Ahmedabad (77%), Indore (74%), Surat (73.7%) are veg-dominant; Kolkata & Goa (18%) are meat-dominant — a clear cloud-kitchen targeting signal.</div>
+  <div class="insight"><b>⚠️ Cold-Start Deficit:</b> 52.2% of Jaipur and 46.0% of Agra restaurants have zero reviews — a gap for "First-Order Review" cashback campaigns.</div>
+</div>
+
+<div class="slide">
+  <h2>Dashboard & Tech Stack</h2>
+  <p>Power BI dashboard styled in Swiggy's Deep Navy & Vibrant Orange brand theme, with KPI trend cards, multi-select city search, dietary filters, price-band slicers, and a national-chains leaderboard (Domino's, KFC, Pizza Hut & more). A live HTML prototype is also included in the repo.</p>
+  <div class="stack">
+    <span class="pill">Python (Pandas)</span><span class="pill">PostgreSQL 18</span>
+    <span class="pill">SQL (Window Fns, CTEs)</span><span class="pill">Power BI + DAX</span>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Repository</h2>
+  <p>Full code, cleaned dataset, SQL suite, DAX measures, and Power BI file:</p>
+  <p style="margin-top:14px"><a href="https://github.com/Aryansoam19/SWIGGY-RESTAURANT-ANALYTICS" target="_blank">github.com/Aryansoam19/SWIGGY-RESTAURANT-ANALYTICS</a></p>
+  <p style="margin-top:24px;font-size:13px">Thank you — Aryan Soam</p>
+</div>
+
+</div>
+
+<div class="footer">
+  <div class="dots" id="dots"></div>
+  <div class="nav">
+    <button onclick="go(-1)">◀ Prev</button>
+    <button onclick="go(1)">Next ▶</button>
+  </div>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const dotsEl=document.getElementById('dots');
+let i=0;
+slides.forEach((_,idx)=>{const d=document.createElement('div');d.className='dot'+(idx===0?' on':'');dotsEl.appendChild(d);});
+function render(){slides.forEach((s,idx)=>s.classList.toggle('active',idx===i));
+  document.querySelectorAll('.dot').forEach((d,idx)=>d.classList.toggle('on',idx===i));}
+function go(n){i=(i+n+slides.length)%slides.length;render();}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1);});
+</script>
+</body>
+</html>
